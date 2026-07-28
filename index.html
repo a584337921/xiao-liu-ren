@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小六壬起课计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+            min-height: 100vh;
+            background: #1a1a2e;
+            color: #e8e8e8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #d4a574;
+            letter-spacing: 8px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #2a2a4a;
+        }
+
+        .card-title {
+            font-size: 18px;
+            color: #d4a574;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 6px;
+        }
+
+        .input-group select,
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e8e8e8;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group select:focus,
+        .input-group input:focus {
+            border-color: #d4a574;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary {
+            background: #d4a574;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background: #c49464;
+        }
+
+        .btn-secondary {
+            background: #2a2a4a;
+            color: #d4a574;
+            border: 1px solid #d4a574;
+        }
+
+        .btn-secondary:hover {
+            background: #3a3a5a;
+        }
+
+        /* 手指图 */
+        .hand-diagram {
+            text-align: center;
+        }
+
+        .hand-svg {
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .gong-label {
+            font-size: 11px;
+            fill: #888;
+            text-anchor: middle;
+        }
+
+        .gong-label.active {
+            fill: #d4a574;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .finger-segment {
+            fill: #1e293b;
+            stroke: #475569;
+            stroke-width: 2;
+            transition: all 0.5s;
+        }
+
+        .finger-segment.active {
+            fill: #d4a57433;
+            stroke: #d4a574;
+            stroke-width: 3;
+        }
+
+        /* 计算过程 */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: #0f172a;
+            border-radius: 8px;
+            border-left: 3px solid #334155;
+            transition: all 0.5s;
+        }
+
+        .step.active {
+            border-left-color: #d4a574;
+            background: #1a2744;
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #334155;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: all 0.5s;
+        }
+
+        .step.active .step-num {
+            background: #d4a574;
+            color: #1a1a2e;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .step-result {
+            font-size: 16px;
+            color: #e8e8e8;
+            margin-top: 4px;
+        }
+
+        .step-result .gong-name {
+            color: #d4a574;
+            font-weight: bold;
+        }
+
+        /* 最终结果 */
+        .final-result {
+            text-align: center;
+            padding: 30px;
+            margin-top: 25px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .final-result.show {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .final-gong {
+            font-size: 48px;
+            color: #d4a574;
+            letter-spacing: 12px;
+            margin-bottom: 10px;
+        }
+
+        .final-tag {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .tag-ji {
+            background: #2ecc7133;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .tag-ping {
+            background: #f39c1233;
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .tag-xiong {
+            background: #e74c3c33;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .final-meaning {
+            font-size: 18px;
+            color: #e8e8e8;
+            margin-bottom: 8px;
+        }
+
+        .final-desc {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.8;
+        }
+
+        .question-note-display {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 15px;
+            padding: 10px 14px;
+            background: #0f172a;
+            border-radius: 8px;
+            border-left: 3px solid #d4a574;
+            text-align: left;
+        }
+
+        .question-note-display:empty {
+            display: none;
+        }
+
+        .divination-result {
+            margin-top: 20px;
+            padding: 18px;
+            background: #0f172a;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            text-align: left;
+        }
+
+        .divination-label {
+            font-size: 12px;
+            color: #d4a574;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .divination-text {
+            font-size: 16px;
+            color: #e8e8e8;
+            line-height: 1.8;
+        }
+
+        .formula-display {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        .current-time-display {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>小六壬起课</h1>
+            <p>以大安起正月，月上起日，日上起时</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- 左侧：输入和手指图 -->
+            <div>
+                <div class="card" style="margin-bottom: 25px;">
+                    <div class="card-title">起课信息</div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>月份</label>
+                            <select id="month">
+                                <option value="1">正月</option>
+                                <option value="2">二月</option>
+                                <option value="3">三月</option>
+                                <option value="4">四月</option>
+                                <option value="5">五月</option>
+                                <option value="6">六月</option>
+                                <option value="7">七月</option>
+                                <option value="8">八月</option>
+                                <option value="9">九月</option>
+                                <option value="10">十月</option>
+                                <option value="11">十一月</option>
+                                <option value="12">十二月</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>日期</label>
+                            <select id="day"></select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group" style="flex: 1;">
+                            <label>时辰</label>
+                            <select id="hour"></select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group" style="flex: 1;">
+                            <label>事类（用于匹配占断）</label>
+                            <select id="questionType">
+                                <option value="general">一般占断</option>
+                                <option value="wealth">求财</option>
+                                <option value="lost">寻物</option>
+                                <option value="person">寻人</option>
+                                <option value="travel">出行</option>
+                                <option value="sick">疾病</option>
+                                <option value="marriage">婚姻</option>
+                                <option value="lawsuit">官事</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group" style="flex: 1;">
+                            <label>问事备注（所问何事，自由填写）</label>
+                            <input type="text" id="questionNote" placeholder="例如：今天出门谈生意能不能成">
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="useCurrentTime()">使用当前时间</button>
+                        <button class="btn btn-primary" onclick="calculate()">起课</button>
+                    </div>
+                    <div class="current-time-display" id="currentTimeDisplay"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">掌诀图</div>
+                    <div class="hand-diagram">
+                        <svg class="hand-svg" viewBox="0 0 300 360">
+                            <!-- 手掌轮廓 -->
+                            <ellipse cx="150" cy="300" rx="80" ry="50" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+                            <!-- 食指 -->
+                            <rect id="seg-dayan" class="finger-segment" x="75" y="180" width="35" height="70" rx="17"/>
+                            <rect id="seg-liulian" class="finger-segment" x="75" y="80" width="35" height="90" rx="17"/>
+                            <!-- 中指 -->
+                            <rect id="seg-suxi" class="finger-segment" x="132" y="80" width="35" height="90" rx="17"/>
+                            <rect id="seg-kongwang" class="finger-segment" x="132" y="180" width="35" height="70" rx="17"/>
+                            <!-- 无名指 -->
+                            <rect id="seg-chikou" class="finger-segment" x="190" y="80" width="35" height="90" rx="17"/>
+                            <rect id="seg-xiaoji" class="finger-segment" x="190" y="180" width="35" height="70" rx="17"/>
+
+                            <!-- 标签 -->
+                            <text id="label-dayan" class="gong-label" x="92" y="225">大安</text>
+                            <text id="label-liulian" class="gong-label" x="92" y="130">留连</text>
+                            <text id="label-suxi" class="gong-label" x="150" y="130">速喜</text>
+                            <text id="label-kongwang" class="gong-label" x="150" y="225">空亡</text>
+                            <text id="label-chikou" class="gong-label" x="207" y="130">赤口</text>
+                            <text id="label-xiaoji" class="gong-label" x="207" y="225">小吉</text>
+
+                            <!-- 手指名称 -->
+                            <text x="92" y="65" fill="#666" font-size="11" text-anchor="middle">食指</text>
+                            <text x="150" y="65" fill="#666" font-size="11" text-anchor="middle">中指</text>
+                            <text x="207" y="65" fill="#666" font-size="11" text-anchor="middle">无名指</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：计算过程和结果 -->
+            <div>
+                <div class="card">
+                    <div class="card-title">推算过程</div>
+                    <div class="steps" id="steps">
+                        <div class="step" id="step1">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <div class="step-title">月起：从大安起正月</div>
+                                <div class="step-result" id="step1Result">等待起课...</div>
+                            </div>
+                        </div>
+                        <div class="step" id="step2">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <div class="step-title">日起：从月落宫起初一</div>
+                                <div class="step-result" id="step2Result">等待起课...</div>
+                            </div>
+                        </div>
+                        <div class="step" id="step3">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <div class="step-title">时起：从日落宫起子时</div>
+                                <div class="step-result" id="step3Result">等待起课...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="final-result" id="finalResult">
+                        <div class="question-note-display" id="questionNoteDisplay"></div>
+                        <div class="final-gong" id="finalGong">--</div>
+                        <div id="finalTag"></div>
+                        <div class="final-meaning" id="finalMeaning"></div>
+                        <div class="final-desc" id="finalDesc"></div>
+                        <div class="divination-result" id="divinationResult"></div>
+                    </div>
+
+                    <div class="formula-display" id="formulaDisplay" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 六宫数据（含各类占断解读）
+        const liuGong = [
+            {
+                name: '大安', meaning: '最大吉利', luck: '吉', tagClass: 'tag-ji',
+                base: '身不动时，五行属木，颜色青色，方位东方。谋事一、五、七。有静止、心安、吉祥之含义。',
+                divination: {
+                    general: '大安事事昌，诸事顺遂，宜守成不宜妄动。',
+                    wealth: '求财在坤方（西南），财运平稳，宜守旧业。',
+                    lost: '失物去不远，就在附近，可向正西、西南寻找。',
+                    person: '行人身未动，尚未启程，或在家未出。',
+                    travel: '出行平安，但不宜远行，近处吉利。',
+                    sick: '病者主无妨，病情稳定，静养可愈。',
+                    marriage: '婚姻安稳，家庭和睦，宜按部就班。',
+                    lawsuit: '官事宜缓，守静则吉，不可激进。'
+                }
+            },
+            {
+                name: '留连', meaning: '运气平平', luck: '平', tagClass: 'tag-ping',
+                base: '人未归时，五行属水，颜色黑色，方位北方。谋事二、八、十。有拖延、纠缠、迟滞之含义。',
+                divination: {
+                    general: '留连事难成，凡事阻碍迟滞，不宜有大动作。',
+                    wealth: '求财难遂，宜缓不宜急，防破财耗损。',
+                    lost: '失物南方见，急讨方趁心，拖延则难寻。',
+                    person: '去者未回程，归期不定，需耐心等待。',
+                    travel: '出行定不归，久去拖延长，不宜远行。',
+                    sick: '病缠绵难愈，虚病为阴人所致，宜解禳。',
+                    marriage: '事不成，欲罢不能，缠绵拖延之象。',
+                    lawsuit: '官事只宜缓，急则生变，防口舌牵连。'
+                }
+            },
+            {
+                name: '速喜', meaning: '喜事在即', luck: '吉', tagClass: 'tag-ji',
+                base: '人即至时，五行属火，颜色红色，方位南方。谋事三、六、九。有快速、喜庆、吉利之含义。',
+                divination: {
+                    general: '速喜喜来临，好事将近，宜速行速决。',
+                    wealth: '求财向南行，财运来得快，把握时机。',
+                    lost: '失物申午未（南偏西），逢人路上寻，可速得。',
+                    person: '行人有信音，即将归来，数日可见。',
+                    travel: '出行吉利，事半功倍，速去速回。',
+                    sick: '病者无祸侵，来得快去得快，无大碍。',
+                    marriage: '喜事在眼前，姻缘速成，好事将近。',
+                    lawsuit: '官事有福德，有人相助，可速了结。'
+                }
+            },
+            {
+                name: '赤口', meaning: '口舌是非', luck: '凶', tagClass: 'tag-xiong',
+                base: '官事凶时，五行属金，颜色白色，方位西方。谋事四、七、十。有惊恐、凶险、口舌之含义。',
+                divination: {
+                    general: '赤口主口舌，是非要紧防，凡事多争执。',
+                    wealth: '求财不利，防因财起争，损耗难免。',
+                    lost: '失物速速讨，迟则被转移，难再寻回。',
+                    person: '行人有惊慌，途中遇阻碍，心情不安。',
+                    travel: '出行多凶险，路遇不顺，宜改期。',
+                    sick: '病者出西方，六畜多作怪，防咒嘴染疫。',
+                    marriage: '多口舌争执，双方不和，防第三者。',
+                    lawsuit: '官事凶，是非缠身，须防刑伤。'
+                }
+            },
+            {
+                name: '小吉', meaning: '小有吉利', luck: '吉', tagClass: 'tag-ji',
+                base: '人来喜时，五行属水，颜色绿色，方位东方。谋事一、五、七。有和合、吉利之含义。',
+                divination: {
+                    general: '小吉最吉昌，路上好商量，凡事可成。',
+                    wealth: '求财有小利，合作生财，不宜贪心。',
+                    lost: '失物在坤方（西南），阴人相助可寻得。',
+                    person: '行人即便至，交关甚是强，很快相见。',
+                    travel: '出行吉利，路上好商量，顺风顺遂。',
+                    sick: '病者叩穹苍，祈禳可愈，无大凶险。',
+                    marriage: '阴人来报喜，姻缘和合，好事成双。',
+                    lawsuit: '凡事皆合和，可调解了结，不强求。'
+                }
+            },
+            {
+                name: '空亡', meaning: '诸事不利', luck: '凶', tagClass: 'tag-xiong',
+                base: '音信稀时，五行属土，颜色黄色，方位中央。谋事三、六、九。有虚诈、无结果之含义。',
+                divination: {
+                    general: '空亡事不祥，阴人少乖张，百事不可为。',
+                    wealth: '求财无利益，必破之财，投资必败。',
+                    lost: '失物寻不见，已无从找起，宜放弃。',
+                    person: '行人有灾殃，音信全无，凶多吉少。',
+                    travel: '出行大凶，诸事不利，万不可行。',
+                    sick: '病人逢暗鬼，病情凶险，须急解禳。',
+                    marriage: '事不成，必有破，空欢喜一场。',
+                    lawsuit: '官事有刑伤，必受其害，难以脱身。'
+                }
+            }
+        ];
+
+        // 宫位对应的手指 segment id
+        const gongSegments = ['dayan', 'liulian', 'suxi', 'chikou', 'xiaoji', 'kongwang'];
+
+        // 时辰数据
+        const shiChen = [
+            { name: '子', num: 1, time: '23:00-01:00' },
+            { name: '丑', num: 2, time: '01:00-03:00' },
+            { name: '寅', num: 3, time: '03:00-05:00' },
+            { name: '卯', num: 4, time: '05:00-07:00' },
+            { name: '辰', num: 5, time: '07:00-09:00' },
+            { name: '巳', num: 6, time: '09:00-11:00' },
+            { name: '午', num: 7, time: '11:00-13:00' },
+            { name: '未', num: 8, time: '13:00-15:00' },
+            { name: '申', num: 9, time: '15:00-17:00' },
+            { name: '酉', num: 10, time: '17:00-19:00' },
+            { name: '戌', num: 11, time: '19:00-21:00' },
+            { name: '亥', num: 12, time: '21:00-23:00' }
+        ];
+
+        // 初始化日期和时辰选项
+        function initOptions() {
+            const daySelect = document.getElementById('day');
+            for (let i = 1; i <= 30; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = i + '日';
+                daySelect.appendChild(opt);
+            }
+
+            const hourSelect = document.getElementById('hour');
+            shiChen.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.num;
+                opt.textContent = s.name + '时 (' + s.time + ')';
+                hourSelect.appendChild(opt);
+            });
+        }
+
+        // 获取当前时间对应的时辰
+        function getCurrentShiChen() {
+            const now = new Date();
+            const h = now.getHours();
+            // 时辰计算
+            if (h >= 23 || h < 1) return 1;      // 子
+            if (h >= 1 && h < 3) return 2;       // 丑
+            if (h >= 3 && h < 5) return 3;       // 寅
+            if (h >= 5 && h < 7) return 4;       // 卯
+            if (h >= 7 && h < 9) return 5;       // 辰
+            if (h >= 9 && h < 11) return 6;      // 巳
+            if (h >= 11 && h < 13) return 7;     // 午
+            if (h >= 13 && h < 15) return 8;     // 未
+            if (h >= 15 && h < 17) return 9;     // 申
+            if (h >= 17 && h < 19) return 10;    // 酉
+            if (h >= 19 && h < 21) return 11;    // 戌
+            return 12;                            // 亥
+        }
+
+        // 使用当前时间（注：这里使用公历月日，实际小六壬用农历，简化处理）
+        function useCurrentTime() {
+            const now = new Date();
+            document.getElementById('month').value = now.getMonth() + 1;
+            document.getElementById('day').value = now.getDate();
+            document.getElementById('hour').value = getCurrentShiChen();
+
+            const sc = shiChen[getCurrentShiChen() - 1];
+            document.getElementById('currentTimeDisplay').textContent =
+                `当前公历：${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${sc.name}时`;
+        }
+
+        // 高亮手指上的宫位
+        function highlightGong(index) {
+            // 清除所有高亮
+            document.querySelectorAll('.finger-segment').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.gong-label').forEach(el => el.classList.remove('active'));
+
+            if (index >= 0 && index < 6) {
+                const segId = 'seg-' + gongSegments[index];
+                const labelId = 'label-' + gongSegments[index];
+                document.getElementById(segId)?.classList.add('active');
+                document.getElementById(labelId)?.classList.add('active');
+            }
+        }
+
+        // 获取宫位顺序名称（用于显示推算路径）
+        function getGongSequence(startIndex, steps) {
+            const names = [];
+            for (let i = 0; i < steps; i++) {
+                const idx = (startIndex + i) % 6;
+                names.push(liuGong[idx].name);
+            }
+            return names;
+        }
+
+        // 核心计算
+        function calculate() {
+            const yue = parseInt(document.getElementById('month').value);
+            const ri = parseInt(document.getElementById('day').value);
+            const shi = parseInt(document.getElementById('hour').value);
+
+            // 验证
+            if (!yue || !ri || !shi) {
+                alert('请完整填写月、日、时辰');
+                return;
+            }
+
+            // 重置显示
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById('finalResult').classList.remove('show');
+            document.getElementById('formulaDisplay').style.display = 'none';
+
+            // === 第一步：月起 ===
+            const yueIndex = (yue - 1) % 6;
+            const yueGong = liuGong[yueIndex];
+            const yueSeq = getGongSequence(0, yue);
+
+            setTimeout(() => {
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('step1Result').innerHTML =
+                    `从大安起正月，顺数至${yue}月，经过：${yueSeq.join(' → ')}<br>` +
+                    `月落<span class="gong-name">${yueGong.name}</span>宫`;
+                highlightGong(yueIndex);
+            }, 100);
+
+            // === 第二步：日起 ===
+            const riIndex = (yueIndex + ri - 1) % 6;
+            const riGong = liuGong[riIndex];
+            const riSeq = getGongSequence(yueIndex, Math.min(ri, 12));
+
+            setTimeout(() => {
+                document.getElementById('step2').classList.add('active');
+                const riSeqStr = ri <= 12 ? riSeq.join(' → ') : riSeq.join(' → ') + ' ...';
+                document.getElementById('step2Result').innerHTML =
+                    `从${yueGong.name}起初一，顺数至${ri}日${ri > 12 ? '（循环往复）' : ''}：${riSeqStr}<br>` +
+                    `日落<span class="gong-name">${riGong.name}</span>宫`;
+                highlightGong(riIndex);
+            }, 600);
+
+            // === 第三步：时起 ===
+            const shiIndex = (riIndex + shi - 1) % 6;
+            const shiGong = liuGong[shiIndex];
+            const shiSeq = getGongSequence(riIndex, Math.min(shi, 12));
+            const scName = shiChen[shi - 1].name;
+
+            setTimeout(() => {
+                document.getElementById('step3').classList.add('active');
+                const shiSeqStr = shi <= 12 ? shiSeq.join(' → ') : shiSeq.join(' → ') + ' ...';
+                document.getElementById('step3Result').innerHTML =
+                    `从${riGong.name}起子时，顺数至${scName}时${shi > 12 ? '（循环往复）' : ''}：${shiSeqStr}<br>` +
+                    `时落<span class="gong-name">${shiGong.name}</span>宫`;
+                highlightGong(shiIndex);
+            }, 1100);
+
+            // === 最终结果 ===
+            setTimeout(() => {
+                const qType = document.getElementById('questionType').value;
+                const qNote = document.getElementById('questionNote').value.trim();
+                const qTypeLabels = {
+                    general: '一般占断', wealth: '求财', lost: '寻物', person: '寻人',
+                    travel: '出行', sick: '疾病', marriage: '婚姻', lawsuit: '官事'
+                };
+
+                document.getElementById('finalResult').classList.add('show');
+
+                // 显示问事备注
+                const noteEl = document.getElementById('questionNoteDisplay');
+                if (qNote) {
+                    noteEl.textContent = '所问：' + qNote;
+                    noteEl.style.display = 'block';
+                } else {
+                    noteEl.textContent = '';
+                    noteEl.style.display = 'none';
+                }
+
+                document.getElementById('finalGong').textContent = shiGong.name;
+                document.getElementById('finalTag').innerHTML =
+                    `<span class="final-tag ${shiGong.tagClass}">${shiGong.luck}</span>`;
+                document.getElementById('finalMeaning').textContent = shiGong.meaning;
+                document.getElementById('finalDesc').textContent = shiGong.base;
+
+                const divText = shiGong.divination[qType] || shiGong.divination.general;
+                document.getElementById('divinationResult').innerHTML =
+                    `<div class="divination-label">【${qTypeLabels[qType]}】</div>` +
+                    `<div class="divination-text">${divText}</div>`;
+
+                const formula = `(${yue}月 + ${ri}日 + ${scName}时 - 3) % 6 = ${shiIndex} → ${shiGong.name}`;
+                document.getElementById('formulaDisplay').style.display = 'block';
+                document.getElementById('formulaDisplay').textContent = formula;
+            }, 1600);
+        }
+
+        // 页面加载初始化
+        window.onload = function() {
+            initOptions();
+            useCurrentTime();
+        };
+    </script>
+</body>
+</html>
