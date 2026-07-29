@@ -9,260 +9,336 @@
 
         body {
             font-family: 'Noto Serif SC', 'SimSun', 'STSong', serif;
-            background: #fff;
-            color: #222;
-            padding: 30px 20px;
-            line-height: 1.6;
+            background: #fafaf8;
+            color: #2c2c2c;
+            padding: 30px 20px 60px;
+            line-height: 1.7;
+            min-height: 100vh;
         }
 
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 920px; margin: 0 auto; }
 
+        /* ===== 头部 ===== */
         header {
             text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 30px;
+            padding: 28px 0 24px;
+            margin-bottom: 32px;
+            position: relative;
         }
-        header h1 { font-size: 28px; letter-spacing: 6px; }
-        header p { font-size: 14px; color: #888; margin-top: 6px; }
+        header::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 2px;
+            background: #333;
+            margin: 16px auto 0;
+            border-radius: 1px;
+        }
+        header h1 {
+            font-size: 30px;
+            letter-spacing: 8px;
+            font-weight: 400;
+            color: #1a1a1a;
+        }
+        header p {
+            font-size: 13px;
+            color: #999;
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
 
+        /* ===== 布局 ===== */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            gap: 24px;
         }
 
         @media (max-width: 768px) {
             .main-grid { grid-template-columns: 1fr; }
+            body { padding: 20px 14px 40px; }
         }
 
+        /* ===== 卡片 ===== */
         .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 25px;
+            border: 1px solid #e8e8e6;
+            border-radius: 10px;
+            padding: 28px;
             background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         .card-title {
-            font-size: 17px;
+            font-size: 16px;
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 22px;
+            padding-bottom: 12px;
             border-bottom: 1px solid #eee;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
+            color: #333;
+            font-weight: 500;
         }
 
-        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        /* ===== 表单 ===== */
+        .input-row { display: flex; gap: 14px; margin-bottom: 14px; }
         .input-group { flex: 1; }
 
         .input-group label {
             display: block;
-            font-size: 13px;
-            color: #555;
-            margin-bottom: 5px;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
         }
 
         .input-group select,
         .input-group input {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            border: 1px solid #e0e0de;
+            border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
-            background: #fff;
-            color: #222;
+            background: #fafaf8;
+            color: #2c2c2c;
             outline: none;
+            transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+        }
+        .input-group select:hover,
+        .input-group input:hover {
+            border-color: #ccc;
         }
         .input-group select:focus,
         .input-group input:focus {
-            border-color: #666;
+            border-color: #555;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
         }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        /* ===== 按钮 ===== */
+        .btn-group { display: flex; gap: 10px; margin-top: 18px; }
 
         .btn {
             flex: 1;
-            padding: 11px;
-            border: 1px solid #333;
-            border-radius: 6px;
+            padding: 11px 16px;
+            border: 1px solid #d0d0ce;
+            border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
             cursor: pointer;
             background: #fff;
-            color: #333;
+            color: #444;
             letter-spacing: 2px;
-            transition: background 0.2s;
+            transition: all 0.25s;
         }
         .btn-primary {
-            background: #333;
+            background: #2c2c2c;
             color: #fff;
-            font-weight: bold;
+            border-color: #2c2c2c;
+            font-weight: 500;
         }
-        .btn:hover { background: #f5f5f5; }
-        .btn-primary:hover { background: #555; }
+        .btn:hover {
+            background: #f5f5f2;
+            border-color: #bbb;
+        }
+        .btn-primary:hover {
+            background: #444;
+            border-color: #444;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
 
-        /* 农历日期显示 */
+        /* ===== 农历日期 ===== */
         .lunar-date-display {
             text-align: center;
             padding: 12px 14px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background: #fafafa;
-            font-size: 15px;
+            margin-bottom: 14px;
+            border: 1px solid #e8e8e6;
+            border-radius: 8px;
+            background: #fafaf8;
+            font-size: 14px;
             color: #333;
             letter-spacing: 1px;
         }
         .lunar-date-display .lunar-label {
-            font-size: 12px;
-            color: #888;
+            font-size: 11px;
+            color: #999;
             margin-right: 4px;
         }
 
-        /* 掌诀图 */
+        /* ===== 掌诀图 ===== */
         .hand-diagram { text-align: center; }
         .hand-svg { max-width: 260px; margin: 0 auto; }
 
         .finger-segment {
-            fill: #fafafa;
-            stroke: #bbb;
+            fill: #fafaf8;
+            stroke: #ccc;
             stroke-width: 2;
-            transition: all 0.4s;
+            transition: all 0.4s ease;
         }
         .finger-segment.active {
-            fill: #e0e0e0;
+            fill: #e8e8e6;
             stroke: #333;
             stroke-width: 3;
         }
 
         .gong-label {
             font-size: 11px;
-            fill: #999;
+            fill: #aaa;
             text-anchor: middle;
+            transition: all 0.4s ease;
         }
         .gong-label.active {
-            fill: #222;
+            fill: #1a1a1a;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 13px;
         }
 
-        /* 推算过程 */
+        /* ===== 推算过程 ===== */
         .steps { display: flex; flex-direction: column; gap: 10px; }
 
         .step {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 16px;
             border: 1px solid #eee;
-            border-radius: 6px;
-            border-left: 3px solid #ddd;
-            transition: all 0.4s;
+            border-radius: 8px;
+            border-left: 3px solid #e0e0de;
+            transition: all 0.4s ease;
+            background: #fff;
         }
         .step.active {
-            border-left-color: #333;
-            background: #fafafa;
+            border-left-color: #2c2c2c;
+            background: #fafaf8;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
         .step-num {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            border: 1px solid #ccc;
-            color: #999;
+            border: 1px solid #ddd;
+            color: #bbb;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             flex-shrink: 0;
-            transition: all 0.4s;
+            transition: all 0.4s ease;
+            margin-top: 2px;
         }
         .step.active .step-num {
-            background: #333;
+            background: #2c2c2c;
             color: #fff;
-            border-color: #333;
+            border-color: #2c2c2c;
         }
         .step-content { flex: 1; }
-        .step-title { font-size: 13px; color: #888; }
-        .step-result { font-size: 15px; margin-top: 4px; }
-        .step-result .gong-name { font-weight: bold; }
+        .step-title { font-size: 13px; color: #999; letter-spacing: 1px; }
+        .step.active .step-title { color: #555; }
+        .step-result { font-size: 14px; margin-top: 6px; color: #555; line-height: 1.7; }
+        .step.active .step-result { color: #2c2c2c; }
+        .step-result .gong-name { font-weight: bold; color: #1a1a1a; }
 
-        /* 最终结果 */
+        /* ===== 最终结果 ===== */
         .final-result {
             text-align: center;
-            padding: 25px 0 0;
-            margin-top: 20px;
+            padding: 28px 0 0;
+            margin-top: 24px;
             border-top: 1px solid #eee;
             display: none;
         }
         .final-result.show { display: block; animation: fadeIn 0.5s ease; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .final-gong { font-size: 42px; letter-spacing: 10px; margin-bottom: 8px; }
+        .final-gong {
+            font-size: 44px;
+            letter-spacing: 12px;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
         .final-tag {
             display: inline-block;
-            padding: 4px 18px;
+            padding: 5px 20px;
             border-radius: 20px;
             font-size: 13px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            letter-spacing: 2px;
         }
-        .tag-ji  { background: #fff; color: #333; border: 1px solid #333; }
-        .tag-ping { background: #fff; color: #888; border: 1px solid #ccc; }
-        .tag-xiong { background: #fff; color: #666; border: 1px solid #999; }
+        .tag-ji  { background: #2c2c2c; color: #fff; }
+        .tag-ping { background: #fff; color: #666; border: 1px solid #ccc; }
+        .tag-xiong { background: #fff; color: #888; border: 1px solid #ddd; }
 
-        .final-meaning { font-size: 16px; margin-bottom: 6px; }
-        .final-desc { font-size: 13px; color: #666; line-height: 1.8; }
+        .final-meaning {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .final-desc {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.8;
+            max-width: 360px;
+            margin: 0 auto;
+        }
 
         .question-note-display {
             font-size: 13px;
             color: #555;
-            margin-bottom: 15px;
-            padding: 10px 14px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            border-left: 3px solid #333;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border: 1px solid #e8e8e6;
+            border-radius: 8px;
+            border-left: 3px solid #2c2c2c;
             text-align: left;
-            background: #fafafa;
+            background: #fafaf8;
         }
         .question-note-display:empty { display: none; }
 
+        /* ===== 解卦详情 ===== */
         .divination-result {
-            margin-top: 18px;
+            margin-top: 20px;
             padding: 0;
             text-align: left;
         }
         .divination-detail {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px 20px;
-            padding: 14px 16px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            background: #fafafa;
+            gap: 10px 24px;
+            padding: 16px 18px;
+            border: 1px solid #e8e8e6;
+            border-radius: 8px;
+            background: #fafaf8;
             margin-bottom: 16px;
         }
         .detail-row {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             font-size: 14px;
         }
         .detail-label {
-            color: #888;
+            color: #999;
             flex-shrink: 0;
         }
         .detail-value {
-            color: #333;
-            font-weight: bold;
+            color: #2c2c2c;
+            font-weight: 500;
         }
         .divination-block {
-            padding: 14px 16px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            background: #fafafa;
+            padding: 16px 18px;
+            border: 1px solid #e8e8e6;
+            border-radius: 8px;
+            background: #fafaf8;
             margin-bottom: 12px;
             text-align: left;
         }
@@ -270,94 +346,108 @@
         .divination-label {
             font-size: 12px;
             color: #555;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             letter-spacing: 2px;
+            font-weight: 500;
         }
-        .divination-text { font-size: 15px; line-height: 1.8; }
+        .divination-text { font-size: 14px; line-height: 1.9; color: #444; }
         .verse-text {
             font-size: 14px;
-            color: #555;
+            color: #666;
             font-style: italic;
-            line-height: 2;
+            line-height: 2.1;
         }
 
         .formula-display {
             text-align: center;
-            margin-top: 15px;
-            padding: 10px;
+            margin-top: 16px;
+            padding: 12px;
             font-size: 13px;
-            color: #999;
-            border-top: 1px dashed #eee;
+            color: #aaa;
+            border-top: 1px dashed #e0e0de;
+            letter-spacing: 1px;
         }
 
         .current-time-display {
             text-align: center;
-            color: #aaa;
+            color: #bbb;
             font-size: 12px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
-        /* 起卦方式切换 */
+        /* ===== 起卦方式切换 ===== */
         .method-tabs {
             display: flex;
             gap: 0;
             margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            border: 1px solid #e0e0de;
+            border-radius: 8px;
             overflow: hidden;
         }
         .method-tab {
             flex: 1;
-            padding: 10px;
+            padding: 11px;
             text-align: center;
             font-size: 14px;
             cursor: pointer;
             background: #fff;
-            color: #666;
+            color: #888;
             border: none;
             font-family: inherit;
-            letter-spacing: 1px;
-            transition: all 0.2s;
+            letter-spacing: 2px;
+            transition: all 0.3s;
         }
         .method-tab.active {
-            background: #333;
+            background: #2c2c2c;
             color: #fff;
         }
         .method-tab:not(.active):hover {
-            background: #f5f5f5;
+            background: #f5f5f2;
+            color: #555;
         }
 
-        /* 三数输入 */
+        /* ===== 三数输入 ===== */
         .number-input-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
         }
         .number-input-group input {
-            width: 70px;
+            width: 72px;
+            height: 52px;
             text-align: center;
-            font-size: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            font-size: 22px;
+            padding: 0;
+            border: 1px solid #e0e0de;
+            border-radius: 10px;
             font-family: inherit;
+            background: #fafaf8;
+            color: #2c2c2c;
             outline: none;
+            transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+        }
+        .number-input-group input:hover {
+            border-color: #ccc;
         }
         .number-input-group input:focus {
-            border-color: #666;
+            border-color: #555;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
         }
         .number-separator {
-            font-size: 18px;
-            color: #999;
+            font-size: 20px;
+            color: #ccc;
+            font-weight: 300;
         }
         .number-labels {
             display: flex;
             justify-content: center;
-            gap: 50px;
-            margin-top: 6px;
+            gap: 54px;
+            margin-top: 8px;
             font-size: 12px;
-            color: #888;
+            color: #aaa;
+            letter-spacing: 1px;
         }
 
         .method-section {
@@ -370,9 +460,10 @@
 
         .hint-text {
             font-size: 12px;
-            color: #999;
-            margin-top: 8px;
+            color: #bbb;
+            margin-top: 10px;
             text-align: center;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -421,7 +512,7 @@
                     <!-- 三数起卦区域 -->
                     <div class="method-section" id="sectionNumber">
                         <div class="input-group" style="margin-bottom: 8px;">
-                            <label>随机三位数（如：358）</label>
+                            <label>随机三位数</label>
                             <div class="number-input-group">
                                 <input type="number" id="numHundred" min="0" max="9" placeholder="0" oninput="limitDigit(this)">
                                 <span class="number-separator">-</span>
