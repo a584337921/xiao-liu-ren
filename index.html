@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小六壬起课</title>
+    <title>小六壬起卦</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -301,14 +301,14 @@
 <body>
     <div class="container">
         <header>
-            <h1>小六壬起课</h1>
+            <h1>小六壬起卦</h1>
             <p>以大安起正月，月上起日，日上起时</p>
         </header>
 
         <div class="main-grid">
             <div>
                 <div class="card" style="margin-bottom: 25px;">
-                    <div class="card-title">起课信息</div>
+                    <div class="card-title">起卦信息</div>
 
                     <!-- 公历日期输入 -->
                     <div class="input-row">
@@ -360,7 +360,7 @@
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-secondary" onclick="useCurrentTime()">使用当前时间</button>
-                        <button class="btn btn-primary" onclick="calculate()">起课</button>
+                        <button class="btn btn-primary" onclick="calculate()">起卦</button>
                     </div>
                     <div class="current-time-display" id="currentTimeDisplay"></div>
                 </div>
@@ -407,21 +407,21 @@
                             <div class="step-num">1</div>
                             <div class="step-content">
                                 <div class="step-title">月起：从大安起正月</div>
-                                <div class="step-result" id="step1Result">等待起课...</div>
+                                <div class="step-result" id="step1Result">等待起卦...</div>
                             </div>
                         </div>
                         <div class="step" id="step2">
                             <div class="step-num">2</div>
                             <div class="step-content">
                                 <div class="step-title">日起：从月落宫起初一</div>
-                                <div class="step-result" id="step2Result">等待起课...</div>
+                                <div class="step-result" id="step2Result">等待起卦...</div>
                             </div>
                         </div>
                         <div class="step" id="step3">
                             <div class="step-num">3</div>
                             <div class="step-content">
                                 <div class="step-title">时起：从日落宫起子时</div>
-                                <div class="step-result" id="step3Result">等待起课...</div>
+                                <div class="step-result" id="step3Result">等待起卦...</div>
                             </div>
                         </div>
                     </div>
@@ -584,7 +584,7 @@
          *    中指上节 = 速喜    中指下节 = 空亡
          *    无名指上节 = 赤口  无名指下节 = 小吉
          *
-         *  起课规则：农历月/日/时 → 大安起正月 → 月上起日 → 日上起时
+         *  起卦规则：农历月/日/时 → 大安起正月 → 月上起日 → 日上起时
          *    Step 1 月落宫 = (农历月 - 1) % 6
          *    Step 2 日落宫 = (月落宫 + 农历日 - 1) % 6
          *    Step 3 时落宫 = (日落宫 + 时辰序数 - 1) % 6
