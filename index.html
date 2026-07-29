@@ -296,6 +296,84 @@
             font-size: 12px;
             margin-top: 10px;
         }
+
+        /* 起卦方式切换 */
+        .method-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .method-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            background: #fff;
+            color: #666;
+            border: none;
+            font-family: inherit;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        .method-tab.active {
+            background: #333;
+            color: #fff;
+        }
+        .method-tab:not(.active):hover {
+            background: #f5f5f5;
+        }
+
+        /* 三数输入 */
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        .number-input-group input {
+            width: 70px;
+            text-align: center;
+            font-size: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            outline: none;
+        }
+        .number-input-group input:focus {
+            border-color: #666;
+        }
+        .number-separator {
+            font-size: 18px;
+            color: #999;
+        }
+        .number-labels {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .method-section {
+            display: none;
+        }
+        .method-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .hint-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -310,33 +388,63 @@
                 <div class="card" style="margin-bottom: 25px;">
                     <div class="card-title">起卦信息</div>
 
-                    <!-- 公历日期输入 -->
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>公历年份</label>
-                            <select id="solarYear"></select>
+                    <!-- 起卦方式切换 -->
+                    <div class="method-tabs">
+                        <button class="method-tab active" id="tabTime" onclick="switchMethod('time')">时间起卦</button>
+                        <button class="method-tab" id="tabNumber" onclick="switchMethod('number')">三数起卦</button>
+                    </div>
+
+                    <!-- 时间起卦区域 -->
+                    <div class="method-section active" id="sectionTime">
+                        <!-- 公历日期输入 -->
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>公历年份</label>
+                                <select id="solarYear"></select>
+                            </div>
+                            <div class="input-group">
+                                <label>公历月份</label>
+                                <select id="solarMonth"></select>
+                            </div>
+                            <div class="input-group">
+                                <label>公历日期</label>
+                                <select id="solarDay"></select>
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label>公历月份</label>
-                            <select id="solarMonth"></select>
-                        </div>
-                        <div class="input-group">
-                            <label>公历日期</label>
-                            <select id="solarDay"></select>
+
+                        <!-- 农历日期显示 -->
+                        <div class="lunar-date-display" id="lunarDateDisplay">
+                            <span class="lunar-label">农历：</span>--
                         </div>
                     </div>
 
-                    <!-- 农历日期显示 -->
-                    <div class="lunar-date-display" id="lunarDateDisplay">
-                        <span class="lunar-label">农历：</span>--
+                    <!-- 三数起卦区域 -->
+                    <div class="method-section" id="sectionNumber">
+                        <div class="input-group" style="margin-bottom: 8px;">
+                            <label>随机三位数（如：358）</label>
+                            <div class="number-input-group">
+                                <input type="number" id="numHundred" min="0" max="9" placeholder="0" oninput="limitDigit(this)">
+                                <span class="number-separator">-</span>
+                                <input type="number" id="numTen" min="0" max="9" placeholder="0" oninput="limitDigit(this)">
+                                <span class="number-separator">-</span>
+                                <input type="number" id="numOne" min="0" max="9" placeholder="0" oninput="limitDigit(this)">
+                            </div>
+                            <div class="number-labels">
+                                <span>百位</span>
+                                <span>十位</span>
+                                <span>个位</span>
+                            </div>
+                        </div>
+                        <div class="hint-text">心中默想三个数字，或看到的一组数字</div>
                     </div>
 
-                    <div class="input-row">
+                    <div class="input-row" id="hourRow">
                         <div class="input-group">
                             <label>时辰</label>
                             <select id="hour"></select>
                         </div>
                     </div>
+
                     <div class="input-row">
                         <div class="input-group">
                             <label>事类</label>
@@ -359,7 +467,7 @@
                         </div>
                     </div>
                     <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="useCurrentTime()">使用当前时间</button>
+                        <button class="btn btn-secondary" id="btnSecondary" onclick="useCurrentTime()">使用当前时间</button>
                         <button class="btn btn-primary" onclick="calculate()">起卦</button>
                     </div>
                     <div class="current-time-display" id="currentTimeDisplay"></div>
@@ -406,21 +514,21 @@
                         <div class="step" id="step1">
                             <div class="step-num">1</div>
                             <div class="step-content">
-                                <div class="step-title">月起：从大安起正月</div>
+                                <div class="step-title" id="step1Title">月起：从大安起正月</div>
                                 <div class="step-result" id="step1Result">等待起卦...</div>
                             </div>
                         </div>
                         <div class="step" id="step2">
                             <div class="step-num">2</div>
                             <div class="step-content">
-                                <div class="step-title">日起：从月落宫起初一</div>
+                                <div class="step-title" id="step2Title">日起：从月落宫起初一</div>
                                 <div class="step-result" id="step2Result">等待起卦...</div>
                             </div>
                         </div>
                         <div class="step" id="step3">
                             <div class="step-num">3</div>
                             <div class="step-content">
-                                <div class="step-title">时起：从日落宫起子时</div>
+                                <div class="step-title" id="step3Title">时起：从日落宫起子时</div>
                                 <div class="step-result" id="step3Result">等待起卦...</div>
                             </div>
                         </div>
@@ -776,6 +884,54 @@
                 lunarDayNames[lunar.day];
         }
 
+        let currentMethod = 'time';
+
+        function switchMethod(method) {
+            currentMethod = method;
+
+            // 切换标签样式
+            document.getElementById('tabTime').classList.toggle('active', method === 'time');
+            document.getElementById('tabNumber').classList.toggle('active', method === 'number');
+
+            // 切换显示区域
+            document.getElementById('sectionTime').classList.toggle('active', method === 'time');
+            document.getElementById('sectionNumber').classList.toggle('active', method === 'number');
+
+            // 时辰只在时间起卦时显示
+            document.getElementById('hourRow').style.display = method === 'time' ? '' : 'none';
+
+            // 更新按钮文字
+            document.getElementById('btnSecondary').textContent =
+                method === 'time' ? '使用当前时间' : '随机三位数';
+
+            // 更新步骤标题
+            if (method === 'time') {
+                document.getElementById('step1Title').textContent = '月起：从大安起正月';
+                document.getElementById('step2Title').textContent = '日起：从月落宫起初一';
+                document.getElementById('step3Title').textContent = '时起：从日落宫起子时';
+            } else {
+                document.getElementById('step1Title').textContent = '百位起：从大安起顺数';
+                document.getElementById('step2Title').textContent = '十位起：从百位落宫起顺数';
+                document.getElementById('step3Title').textContent = '个位起：从十位落宫起顺数';
+            }
+
+            // 清空之前的结果
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById('finalResult').classList.remove('show');
+            document.getElementById('formulaDisplay').style.display = 'none';
+            document.getElementById('step1Result').textContent = '等待起卦...';
+            document.getElementById('step2Result').textContent = '等待起卦...';
+            document.getElementById('step3Result').textContent = '等待起卦...';
+            highlightGong(-1);
+        }
+
+        function limitDigit(input) {
+            let v = input.value;
+            if (v.length > 1) input.value = v.slice(-1);
+            if (v < 0) input.value = 0;
+            if (v > 9) input.value = 9;
+        }
+
         function getCurrentShiChen() {
             const h = new Date().getHours();
             if (h >= 23 || h < 1) return 1;
@@ -793,6 +949,19 @@
         }
 
         function useCurrentTime() {
+            if (currentMethod === 'number') {
+                // 三数起卦模式：生成随机三位数
+                const n1 = Math.floor(Math.random() * 10);
+                const n2 = Math.floor(Math.random() * 10);
+                const n3 = Math.floor(Math.random() * 10);
+                document.getElementById('numHundred').value = n1;
+                document.getElementById('numTen').value = n2;
+                document.getElementById('numOne').value = n3;
+                document.getElementById('currentTimeDisplay').textContent =
+                    '随机三位数：' + n1 + ' - ' + n2 + ' - ' + n3;
+                return;
+            }
+
             const now = new Date();
             document.getElementById('solarYear').value = now.getFullYear();
             document.getElementById('solarMonth').value = now.getMonth() + 1;
@@ -829,76 +998,148 @@
         }
 
         function calculate() {
-            const sy = parseInt(document.getElementById('solarYear').value);
-            const sm = parseInt(document.getElementById('solarMonth').value);
-            const sd = parseInt(document.getElementById('solarDay').value);
-            const shi = parseInt(document.getElementById('hour').value);
-
-            if (!sy || !sm || !sd || !shi) {
-                alert('请完整填写公历日期和时辰');
-                return;
-            }
-
-            // 公历转农历
-            const lunar = solarToLunar(sy, sm, sd);
-            if (!lunar) {
-                alert('农历转换失败，请检查日期范围（1900-2100年）');
-                return;
-            }
-
-            const yue = lunar.month;  // 农历月
-            const ri = lunar.day;     // 农历日
-
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById('finalResult').classList.remove('show');
             document.getElementById('formulaDisplay').style.display = 'none';
 
-            // Step 1: 月起 — 大安起正月，顺数至农历月
-            const yueIndex = (yue - 1) % 6;
-            const yueGong = liuGong[yueIndex];
-            const yueSeq = getGongSequence(0, yue);
+            let yueIndex, riIndex, shiIndex;
+            let yueGong, riGong, shiGong;
+            let formula;
 
-            setTimeout(() => {
-                document.getElementById('step1').classList.add('active');
-                document.getElementById('step1Result').innerHTML =
-                    '从大安起正月，顺数至' + lunarMonthNames[yue-1] + '，经过：' +
-                    yueSeq.join(' → ') + '<br>' +
-                    '月落<span class="gong-name">' + yueGong.name + '</span>宫';
-                highlightGong(yueIndex);
-            }, 100);
+            if (currentMethod === 'time') {
+                // ===== 时间起卦 =====
+                const sy = parseInt(document.getElementById('solarYear').value);
+                const sm = parseInt(document.getElementById('solarMonth').value);
+                const sd = parseInt(document.getElementById('solarDay').value);
+                const shi = parseInt(document.getElementById('hour').value);
 
-            // Step 2: 日起 — 月落宫起初一，顺数至农历日
-            const riIndex = (yueIndex + ri - 1) % 6;
-            const riGong = liuGong[riIndex];
-            const riSeq = getGongSequence(yueIndex, Math.min(ri, 12));
+                if (!sy || !sm || !sd || !shi) {
+                    alert('请完整填写公历日期和时辰');
+                    return;
+                }
 
-            setTimeout(() => {
-                document.getElementById('step2').classList.add('active');
-                const riSeqStr = ri <= 12 ? riSeq.join(' → ') : riSeq.join(' → ') + ' ...';
-                document.getElementById('step2Result').innerHTML =
-                    '从' + yueGong.name + '起初一，顺数至' + lunarDayNames[ri] +
-                    (ri > 12 ? '（循环往复）' : '') + '：' + riSeqStr + '<br>' +
-                    '日落<span class="gong-name">' + riGong.name + '</span>宫';
-                highlightGong(riIndex);
-            }, 600);
+                const lunar = solarToLunar(sy, sm, sd);
+                if (!lunar) {
+                    alert('农历转换失败，请检查日期范围（1900-2100年）');
+                    return;
+                }
 
-            // Step 3: 时起 — 日落宫起子时，顺数至时辰
-            const shiIndex = (riIndex + shi - 1) % 6;
-            const shiGong = liuGong[shiIndex];
-            const shiSeq = getGongSequence(riIndex, Math.min(shi, 12));
-            const scName = shiChen[shi - 1].name;
+                const yue = lunar.month;
+                const ri = lunar.day;
+                const scName = shiChen[shi - 1].name;
 
-            setTimeout(() => {
-                document.getElementById('step3').classList.add('active');
-                const shiSeqStr = shi <= 12 ? shiSeq.join(' → ') : shiSeq.join(' → ') + ' ...';
-                document.getElementById('step3Result').innerHTML =
-                    '从' + riGong.name + '起子时，顺数至' + scName + '时' +
-                    (shi > 12 ? '（循环往复）' : '') + '：' + shiSeqStr + '<br>' +
-                    '时落<span class="gong-name">' + shiGong.name + '</span>宫';
-                highlightGong(shiIndex);
-            }, 1100);
+                // Step 1: 月起
+                yueIndex = (yue - 1) % 6;
+                yueGong = liuGong[yueIndex];
+                const yueSeq = getGongSequence(0, yue);
 
-            // 最终结果
+                setTimeout(() => {
+                    document.getElementById('step1').classList.add('active');
+                    document.getElementById('step1Result').innerHTML =
+                        '从大安起正月，顺数至' + lunarMonthNames[yue-1] + '，经过：' +
+                        yueSeq.join(' → ') + '<br>' +
+                        '月落<span class="gong-name">' + yueGong.name + '</span>宫';
+                    highlightGong(yueIndex);
+                }, 100);
+
+                // Step 2: 日起
+                riIndex = (yueIndex + ri - 1) % 6;
+                riGong = liuGong[riIndex];
+                const riSeq = getGongSequence(yueIndex, Math.min(ri, 12));
+
+                setTimeout(() => {
+                    document.getElementById('step2').classList.add('active');
+                    const riSeqStr = ri <= 12 ? riSeq.join(' → ') : riSeq.join(' → ') + ' ...';
+                    document.getElementById('step2Result').innerHTML =
+                        '从' + yueGong.name + '起初一，顺数至' + lunarDayNames[ri] +
+                        (ri > 12 ? '（循环往复）' : '') + '：' + riSeqStr + '<br>' +
+                        '日落<span class="gong-name">' + riGong.name + '</span>宫';
+                    highlightGong(riIndex);
+                }, 600);
+
+                // Step 3: 时起
+                shiIndex = (riIndex + shi - 1) % 6;
+                shiGong = liuGong[shiIndex];
+                const shiSeq = getGongSequence(riIndex, Math.min(shi, 12));
+
+                setTimeout(() => {
+                    document.getElementById('step3').classList.add('active');
+                    const shiSeqStr = shi <= 12 ? shiSeq.join(' → ') : shiSeq.join(' → ') + ' ...';
+                    document.getElementById('step3Result').innerHTML =
+                        '从' + riGong.name + '起子时，顺数至' + scName + '时' +
+                        (shi > 12 ? '（循环往复）' : '') + '：' + shiSeqStr + '<br>' +
+                        '时落<span class="gong-name">' + shiGong.name + '</span>宫';
+                    highlightGong(shiIndex);
+                }, 1100);
+
+                formula = '农历' + lunarMonthNames[yue-1] + lunarDayNames[ri] +
+                    ' ' + scName + '时 → ' + shiGong.name;
+
+            } else {
+                // ===== 三数起卦 =====
+                const n1 = parseInt(document.getElementById('numHundred').value);
+                const n2 = parseInt(document.getElementById('numTen').value);
+                const n3 = parseInt(document.getElementById('numOne').value);
+
+                if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
+                    alert('请输入完整的三位数字（0-9）');
+                    return;
+                }
+
+                // 0当作6处理（取满数），1-9直接使用
+                const num1 = n1 === 0 ? 6 : n1;
+                const num2 = n2 === 0 ? 6 : n2;
+                const num3 = n3 === 0 ? 6 : n3;
+
+                // Step 1: 百位数 — 从大安起顺数
+                yueIndex = (num1 - 1) % 6;
+                yueGong = liuGong[yueIndex];
+                const seq1 = getGongSequence(0, Math.min(num1, 12));
+
+                setTimeout(() => {
+                    document.getElementById('step1').classList.add('active');
+                    const seq1Str = num1 <= 12 ? seq1.join(' → ') : seq1.join(' → ') + ' ...';
+                    document.getElementById('step1Result').innerHTML =
+                        '从大安起，顺数' + num1 + '位' +
+                        (num1 > 12 ? '（循环往复）' : '') + '：' + seq1Str + '<br>' +
+                        '百位落<span class="gong-name">' + yueGong.name + '</span>宫';
+                    highlightGong(yueIndex);
+                }, 100);
+
+                // Step 2: 十位数 — 从百位落宫起顺数
+                riIndex = (yueIndex + num2 - 1) % 6;
+                riGong = liuGong[riIndex];
+                const seq2 = getGongSequence(yueIndex, Math.min(num2, 12));
+
+                setTimeout(() => {
+                    document.getElementById('step2').classList.add('active');
+                    const seq2Str = num2 <= 12 ? seq2.join(' → ') : seq2.join(' → ') + ' ...';
+                    document.getElementById('step2Result').innerHTML =
+                        '从' + yueGong.name + '起，顺数' + num2 + '位' +
+                        (num2 > 12 ? '（循环往复）' : '') + '：' + seq2Str + '<br>' +
+                        '十位落<span class="gong-name">' + riGong.name + '</span>宫';
+                    highlightGong(riIndex);
+                }, 600);
+
+                // Step 3: 个位数 — 从十位落宫起顺数
+                shiIndex = (riIndex + num3 - 1) % 6;
+                shiGong = liuGong[shiIndex];
+                const seq3 = getGongSequence(riIndex, Math.min(num3, 12));
+
+                setTimeout(() => {
+                    document.getElementById('step3').classList.add('active');
+                    const seq3Str = num3 <= 12 ? seq3.join(' → ') : seq3.join(' → ') + ' ...';
+                    document.getElementById('step3Result').innerHTML =
+                        '从' + riGong.name + '起，顺数' + num3 + '位' +
+                        (num3 > 12 ? '（循环往复）' : '') + '：' + seq3Str + '<br>' +
+                        '个位落<span class="gong-name">' + shiGong.name + '</span>宫';
+                    highlightGong(shiIndex);
+                }, 1100);
+
+                formula = '三数 ' + n1 + '-' + n2 + '-' + n3 + ' → ' + shiGong.name;
+            }
+
+            // 最终结果（通用）
             setTimeout(() => {
                 const qType = document.getElementById('questionType').value;
                 const qNote = document.getElementById('questionNote').value.trim();
@@ -958,8 +1199,6 @@
 
                 document.getElementById('divinationResult').innerHTML = detailHTML;
 
-                const formula = '农历' + lunarMonthNames[yue-1] + lunarDayNames[ri] +
-                    ' ' + scName + '时 → ' + shiGong.name;
                 document.getElementById('formulaDisplay').style.display = 'block';
                 document.getElementById('formulaDisplay').textContent = formula;
             }, 1600);
