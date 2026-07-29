@@ -879,9 +879,20 @@
             }
 
             const prefix = lunar.isLeap ? '闰' : '';
+            let leapHint = '';
+            if (lunar.isLeap) {
+                if (lunar.day <= 15 && lunar.month > 1) {
+                    leapHint = ' （起卦时上半月按前月' + lunarMonthNames[lunar.month - 2] + '计算）';
+                } else if (lunar.day <= 15) {
+                    leapHint = ' （起卦时上半月按前月腊月计算）';
+                } else {
+                    leapHint = ' （起卦时下半月按本月计算）';
+                }
+            }
             el.innerHTML = '<span class="lunar-label">农历：</span>' +
                 getYearName(lunar.year) + ' ' + prefix + lunarMonthNames[lunar.month - 1] +
-                lunarDayNames[lunar.day];
+                lunarDayNames[lunar.day] +
+                (leapHint ? '<span style="color:#888;font-size:11px;">' + leapHint + '</span>' : '');
         }
 
         let currentMethod = 'time';
@@ -1028,17 +1039,32 @@
                 const ri = lunar.day;
                 const scName = shiChen[shi - 1].name;
 
+                // 闰月处理：上半月算前月，下半月算本月
+                let leapNote = '';
+                let effectiveMonth = yue;
+                let displayMonthName = lunarMonthNames[yue-1];
+                if (lunar.isLeap) {
+                    if (ri <= 15) {
+                        effectiveMonth = yue - 1;
+                        displayMonthName = lunarMonthNames[effectiveMonth-1];
+                        leapNote = '（闰月上半月，按前月' + displayMonthName + '计算）';
+                    } else {
+                        leapNote = '（闰月下半月，按本月' + displayMonthName + '计算）';
+                    }
+                }
+
                 // Step 1: 月起
-                yueIndex = (yue - 1) % 6;
+                yueIndex = (effectiveMonth - 1) % 6;
                 yueGong = liuGong[yueIndex];
-                const yueSeq = getGongSequence(0, yue);
+                const yueSeq = getGongSequence(0, effectiveMonth);
 
                 setTimeout(() => {
                     document.getElementById('step1').classList.add('active');
                     document.getElementById('step1Result').innerHTML =
-                        '从大安起正月，顺数至' + lunarMonthNames[yue-1] + '，经过：' +
+                        '从大安起正月，顺数至' + displayMonthName + '，经过：' +
                         yueSeq.join(' → ') + '<br>' +
-                        '月落<span class="gong-name">' + yueGong.name + '</span>宫';
+                        '月落<span class="gong-name">' + yueGong.name + '</span>宫' +
+                        (leapNote ? '<br><span style="color:#888;font-size:12px;">' + leapNote + '</span>' : '');
                     highlightGong(yueIndex);
                 }, 100);
 
@@ -1072,8 +1098,9 @@
                     highlightGong(shiIndex);
                 }, 1100);
 
-                formula = '农历' + lunarMonthNames[yue-1] + lunarDayNames[ri] +
-                    ' ' + scName + '时 → ' + shiGong.name;
+                const prefix = lunar.isLeap ? '闰' : '';
+                formula = '农历' + prefix + lunarMonthNames[yue-1] + lunarDayNames[ri] +
+                    ' ' + scName + '时' + (leapNote ? ' ' + leapNote : '') + ' → ' + shiGong.name;
 
             } else {
                 // ===== 三数起卦 =====
