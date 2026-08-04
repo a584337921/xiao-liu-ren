@@ -154,6 +154,24 @@
             transform: scale(0.98);
         }
 
+        .btn-small {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        .btn-inline {
+            background: #fafaf8;
+            border: 1px solid #e0e0de;
+            color: #666;
+        }
+        .btn-inline:hover {
+            background: #f0f0ee;
+            border-color: #bbb;
+            color: #333;
+        }
+
         /* ===== 农历日期 ===== */
         .lunar-date-display {
             text-align: center;
@@ -559,6 +577,7 @@
                                     <select id="solarDay"></select>
                                 </div>
                             </div>
+                            <button class="btn btn-small btn-inline" onclick="useCurrentSolar()">当前公历时间</button>
                         </div>
 
                         <!-- 农历输入区域 -->
@@ -581,6 +600,7 @@
                                 <input type="checkbox" id="isLeapMonth" onchange="updateDateDisplay()">
                                 <label for="isLeapMonth">闰月</label>
                             </div>
+                            <button class="btn btn-small btn-inline" onclick="useCurrentLunar()">当前农历时间</button>
                         </div>
 
                         <!-- 日期对照显示 -->
@@ -1256,6 +1276,42 @@
             return 12;
         }
 
+        function useCurrentSolar() {
+            const now = new Date();
+            document.getElementById('solarYear').value = now.getFullYear();
+            document.getElementById('solarMonth').value = now.getMonth() + 1;
+            document.getElementById('solarDay').value = now.getDate();
+            updateDateDisplay();
+            const sc = getCurrentShiChen();
+            document.getElementById('hour').value = sc;
+            const lunar = solarToLunar(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            let lunarStr = '';
+            if (lunar) {
+                const prefix = lunar.isLeap ? '闰' : '';
+                lunarStr = ' | 农历：' + getYearName(lunar.year) + ' ' + prefix + lunarMonthNames[lunar.month - 1] + lunarDayNames[lunar.day];
+            }
+            document.getElementById('currentTimeDisplay').textContent =
+                '当前公历：' + now.getFullYear() + '年' + (now.getMonth()+1) + '月' +
+                now.getDate() + '日 ' + shiChen[sc-1].name + '时' + lunarStr;
+        }
+
+        function useCurrentLunar() {
+            const now = new Date();
+            const lunar = solarToLunar(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            if (lunar) {
+                document.getElementById('lunarYear').value = lunar.year;
+                document.getElementById('lunarMonth').value = lunar.month;
+                document.getElementById('lunarDay').value = lunar.day;
+                document.getElementById('isLeapMonth').checked = lunar.isLeap;
+            }
+            updateDateDisplay();
+            const sc = getCurrentShiChen();
+            document.getElementById('hour').value = sc;
+            document.getElementById('currentTimeDisplay').textContent =
+                '当前公历：' + now.getFullYear() + '年' + (now.getMonth()+1) + '月' +
+                now.getDate() + '日 ' + shiChen[sc-1].name + '时（已自动转为农历）';
+        }
+
         function useCurrentTime() {
             if (currentMethod === 'number') {
                 // 三数起卦模式：生成随机三位数
@@ -1269,38 +1325,11 @@
                     '随机三位数：' + n1 + ' - ' + n2 + ' - ' + n3;
                 return;
             }
-
-            const now = new Date();
-            const sc = getCurrentShiChen();
-            document.getElementById('hour').value = sc;
-
+            // 时间起卦模式：根据当前切换状态调用对应函数
             if (currentCalendar === 'lunar') {
-                // 农历模式：当前公历 → 农历，填入农历输入框
-                const lunar = solarToLunar(now.getFullYear(), now.getMonth() + 1, now.getDate());
-                if (lunar) {
-                    document.getElementById('lunarYear').value = lunar.year;
-                    document.getElementById('lunarMonth').value = lunar.month;
-                    document.getElementById('lunarDay').value = lunar.day;
-                    document.getElementById('isLeapMonth').checked = lunar.isLeap;
-                }
-                updateDateDisplay();
-                document.getElementById('currentTimeDisplay').textContent =
-                    '当前公历：' + now.getFullYear() + '年' + (now.getMonth()+1) + '月' +
-                    now.getDate() + '日 ' + shiChen[sc-1].name + '时（已自动转为农历）';
+                useCurrentLunar();
             } else {
-                document.getElementById('solarYear').value = now.getFullYear();
-                document.getElementById('solarMonth').value = now.getMonth() + 1;
-                document.getElementById('solarDay').value = now.getDate();
-                updateDateDisplay();
-                const lunar = solarToLunar(now.getFullYear(), now.getMonth() + 1, now.getDate());
-                let lunarStr = '';
-                if (lunar) {
-                    const prefix = lunar.isLeap ? '闰' : '';
-                    lunarStr = ' | 农历：' + getYearName(lunar.year) + ' ' + prefix + lunarMonthNames[lunar.month - 1] + lunarDayNames[lunar.day];
-                }
-                document.getElementById('currentTimeDisplay').textContent =
-                    '当前公历：' + now.getFullYear() + '年' + (now.getMonth()+1) + '月' +
-                    now.getDate() + '日 ' + shiChen[sc-1].name + '时' + lunarStr;
+                useCurrentSolar();
             }
         }
 
