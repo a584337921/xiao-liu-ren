@@ -90,7 +90,60 @@
 
         @media (max-width: 768px) {
             .main-grid { grid-template-columns: 1fr; }
-            body { padding: 20px 14px 40px; }
+            body { padding: 16px 10px 36px; }
+            header { padding: 24px 0 20px; margin-bottom: 24px; }
+            header h1 { font-size: 24px; letter-spacing: 6px; }
+            header p { font-size: 12px; letter-spacing: 2px; }
+            .card { padding: 20px 16px; }
+            .card-title { font-size: 15px; letter-spacing: 3px; margin-bottom: 18px; }
+            .input-row { flex-direction: column; gap: 10px; }
+            .btn { font-size: 13px; padding: 10px 12px; letter-spacing: 2px; }
+            .btn-primary { font-size: 14px; }
+            .final-gong { font-size: 36px; letter-spacing: 10px; }
+            .final-meaning { font-size: 15px; }
+            .final-desc { font-size: 13px; max-width: 100%; }
+            .divination-detail { grid-template-columns: 1fr; gap: 6px 16px; }
+            .number-input-group { gap: 6px; }
+            .number-input-group input { width: 56px; height: 44px; font-size: 18px; }
+            .number-separator { font-size: 16px; }
+            .number-labels { gap: 30px; font-size: 11px; }
+            .method-tab { font-size: 13px; padding: 9px; letter-spacing: 2px; }
+            .cal-toggle-btn { font-size: 12px; padding: 8px; letter-spacing: 2px; }
+            .step { padding: 12px 14px; }
+            .step-title { font-size: 12px; }
+            .step-result { font-size: 13px; }
+            .formula-display { font-size: 12px; }
+            .hand-svg { max-width: 200px; }
+            .gong-label { font-size: 10px; }
+            .gong-label.active { font-size: 11px; }
+            .footer-ref { padding: 16px 12px; }
+            .footer-ref .ref-text { font-size: 11px; }
+            .footer-ref .ref-divider { margin: 0 8px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px 8px 30px; }
+            header { padding: 18px 0 16px; margin-bottom: 18px; }
+            header h1 { font-size: 20px; letter-spacing: 4px; }
+            .card { padding: 16px 12px; border-radius: 3px; }
+            .card-title { font-size: 14px; letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 10px; }
+            .btn { font-size: 12px; padding: 9px 10px; }
+            .btn-primary { font-size: 13px; }
+            .final-gong { font-size: 28px; letter-spacing: 8px; }
+            .final-tag { font-size: 12px; padding: 4px 16px; }
+            .number-input-group input { width: 48px; height: 40px; font-size: 16px; }
+            .number-labels { gap: 20px; font-size: 10px; }
+            .method-tab { font-size: 12px; padding: 8px; letter-spacing: 1px; }
+            .cal-toggle-btn { font-size: 11px; padding: 7px; }
+            .step-num { width: 24px; height: 24px; font-size: 11px; }
+            .hand-svg { max-width: 170px; }
+            .gong-label { font-size: 9px; }
+            .gong-label.active { font-size: 10px; }
+            .btn-group { flex-direction: column; gap: 8px; }
+            .footer-ref { padding: 14px 8px; }
+            .footer-ref .ref-title { font-size: 11px; }
+            .footer-ref .ref-text { font-size: 10px; }
+            .footer-ref .ref-divider { margin: 0 6px; }
         }
 
         /* ===== 卡片 ===== */
@@ -616,6 +669,32 @@
             letter-spacing: 2px;
             font-weight: 500;
         }
+
+        /* ===== 页脚 · 参考古籍 ===== */
+        .footer-ref {
+            text-align: center;
+            padding: 20px 16px;
+            margin-top: 36px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .footer-ref .ref-title {
+            font-size: 12px;
+            color: #8b7d6b;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .footer-ref .ref-text {
+            font-size: 12px;
+            color: #a89880;
+            letter-spacing: 2px;
+            line-height: 2;
+        }
+        .footer-ref .ref-divider {
+            display: inline-block;
+            margin: 0 10px;
+            color: #c8b8a8;
+        }
     </style>
 </head>
 <body>
@@ -820,6 +899,16 @@
                     <div class="formula-display" id="formulaDisplay" style="display: none;"></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="footer-ref">
+        <div class="ref-title">参考古籍</div>
+        <div class="ref-text">
+            《小六壬全本》<span class="ref-divider">|</span>
+            《小六壬占卜法》<span class="ref-divider">|</span>
+            《小六壬掌诀》<span class="ref-divider">|</span>
+            《李淳风六壬时课》
         </div>
     </div>
 
@@ -1461,7 +1550,7 @@
                         return;
                     }
                     document.getElementById('currentTimeDisplay').textContent =
-                        '公历' + sy + '年' + sm + '月' + sd + '日 → 农历丙午年' + (lunar.isLeap ? '闰' : '') + lunarMonthNames[lunar.month - 1] + '月' + lunarDayNames[lunar.day];
+                        '公历' + sy + '年' + sm + '月' + sd + '日 → 农历' + getYearName(lunar.year) + ' ' + (lunar.isLeap ? '闰' : '') + lunarMonthNames[lunar.month - 1] + '月' + lunarDayNames[lunar.day];
                     doCalculateTime(sy, sm, sd, shi, lunar);
                 } else {
                     const ly = parseInt(document.getElementById('lunarYear').value);
