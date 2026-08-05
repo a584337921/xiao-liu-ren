@@ -7,44 +7,78 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Noto Serif SC', 'SimSun', 'STSong', serif;
-            background: #fafaf8;
-            color: #2c2c2c;
-            padding: 30px 20px 60px;
-            line-height: 1.7;
-            min-height: 100vh;
+        @font-face {
+            font-family: 'InkWash';
+            src: local('KaiTi'), local('STKaiti'), local('FangSong'), local('STFangsong'), local('SimSun'), local('STSong'), serif;
         }
 
-        .container { max-width: 920px; margin: 0 auto; }
+        body {
+            font-family: 'KaiTi', 'STKaiti', 'Noto Serif SC', 'SimSun', 'STSong', serif;
+            background: #f2ece0;
+            background-image:
+                radial-gradient(ellipse at 20% 10%, rgba(0,0,0,0.02) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 90%, rgba(0,0,0,0.025) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(139,119,90,0.04) 0%, transparent 70%);
+            color: #1f1a12;
+            padding: 30px 20px 60px;
+            line-height: 1.8;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 宣纸纹理 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.005) 2px, rgba(0,0,0,0.005) 3px),
+                repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.003) 4px, rgba(0,0,0,0.003) 5px);
+            opacity: 0.5;
+        }
+
+        .container { max-width: 920px; margin: 0 auto; position: relative; z-index: 1; }
 
         /* ===== 头部 ===== */
         header {
             text-align: center;
-            padding: 28px 0 24px;
-            margin-bottom: 32px;
+            padding: 36px 0 28px;
+            margin-bottom: 36px;
             position: relative;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent);
         }
         header::after {
             content: '';
             display: block;
-            width: 60px;
-            height: 2px;
-            background: #333;
-            margin: 16px auto 0;
-            border-radius: 1px;
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #5a4e3e, transparent);
+            margin: 18px auto 0;
         }
         header h1 {
-            font-size: 30px;
-            letter-spacing: 8px;
-            font-weight: 400;
-            color: #1a1a1a;
+            font-size: 32px;
+            letter-spacing: 10px;
+            font-weight: 700;
+            color: #1a1208;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.08);
         }
         header p {
-            font-size: 13px;
-            color: #999;
-            margin-top: 8px;
-            letter-spacing: 2px;
+            font-size: 14px;
+            color: #6b5d4e;
+            margin-top: 10px;
+            letter-spacing: 3px;
+            font-weight: 500;
         }
 
         /* ===== 布局 ===== */
@@ -61,26 +95,43 @@
 
         /* ===== 卡片 ===== */
         .card {
-            border: 1px solid #e8e8e6;
-            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 4px;
             padding: 28px;
-            background: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            transition: box-shadow 0.3s;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(2px);
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.04),
+                inset 0 0 0 1px rgba(255,255,255,0.5);
+            transition: box-shadow 0.4s;
+            position: relative;
         }
         .card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow:
+                0 3px 14px rgba(0,0,0,0.07),
+                inset 0 0 0 1px rgba(255,255,255,0.6);
         }
 
         .card-title {
-            font-size: 16px;
+            font-size: 17px;
             text-align: center;
-            margin-bottom: 22px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eee;
-            letter-spacing: 4px;
-            color: #333;
-            font-weight: 500;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            letter-spacing: 5px;
+            color: #1f1a12;
+            font-weight: 600;
+            position: relative;
+        }
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background: #8b7d6b;
         }
 
         /* ===== 表单 ===== */
@@ -89,34 +140,36 @@
 
         .input-group label {
             display: block;
-            font-size: 12px;
-            color: #888;
+            font-size: 13px;
+            color: #5a4e3e;
             margin-bottom: 6px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 500;
         }
 
         .input-group select,
         .input-group input {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #e0e0de;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 3px;
+            font-size: 15px;
             font-family: inherit;
-            background: #fafaf8;
-            color: #2c2c2c;
+            background: rgba(255,255,255,0.6);
+            color: #1f1a12;
+            font-weight: 500;
             outline: none;
-            transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+            transition: all 0.3s;
         }
         .input-group select:hover,
         .input-group input:hover {
-            border-color: #ccc;
+            border-color: rgba(0,0,0,0.2);
         }
         .input-group select:focus,
         .input-group input:focus {
-            border-color: #555;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.35);
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
         }
 
         /* ===== 按钮 ===== */
@@ -125,30 +178,33 @@
         .btn {
             flex: 1;
             padding: 11px 16px;
-            border: 1px solid #d0d0ce;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1px solid rgba(0,0,0,0.18);
+            border-radius: 3px;
+            font-size: 15px;
             font-family: inherit;
             cursor: pointer;
-            background: #fff;
-            color: #444;
-            letter-spacing: 2px;
-            transition: all 0.25s;
+            background: rgba(255,255,255,0.6);
+            color: #3a3028;
+            letter-spacing: 3px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
         .btn-primary {
-            background: #2c2c2c;
-            color: #fff;
-            border-color: #2c2c2c;
-            font-weight: 500;
+            background: #2c2418;
+            color: #f0ebe0;
+            border-color: #2c2418;
+            font-weight: 600;
+            letter-spacing: 4px;
         }
         .btn:hover {
-            background: #f5f5f2;
-            border-color: #bbb;
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(0,0,0,0.3);
         }
         .btn-primary:hover {
-            background: #444;
-            border-color: #444;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            background: #3a3028;
+            border-color: #3a3028;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            color: #fff;
         }
         .btn:active {
             transform: scale(0.98);
@@ -158,35 +214,37 @@
             width: 100%;
             padding: 8px 12px;
             font-size: 12px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             margin-top: 10px;
         }
         .btn-inline {
-            background: #fafaf8;
-            border: 1px solid #e0e0de;
-            color: #666;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: #5a4e3e;
+            font-weight: 500;
         }
         .btn-inline:hover {
-            background: #f0f0ee;
-            border-color: #bbb;
-            color: #333;
+            background: rgba(255,255,255,0.65);
+            border-color: rgba(0,0,0,0.2);
+            color: #3a3028;
         }
 
-        /* ===== 农历日期 ===== */
+        /* ===== 农历日期显示 ===== */
         .lunar-date-display {
             text-align: center;
             padding: 12px 14px;
             margin-bottom: 14px;
-            border: 1px solid #e8e8e6;
-            border-radius: 8px;
-            background: #fafaf8;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 3px;
+            background: rgba(255,255,255,0.4);
             font-size: 14px;
-            color: #333;
-            letter-spacing: 1px;
+            color: #3a3028;
+            letter-spacing: 2px;
+            font-weight: 500;
         }
         .lunar-date-display .lunar-label {
             font-size: 11px;
-            color: #999;
+            color: #6b5d4e;
             margin-right: 4px;
         }
 
@@ -195,27 +253,36 @@
         .hand-svg { max-width: 260px; margin: 0 auto; }
 
         .finger-segment {
-            fill: #fafaf8;
-            stroke: #ccc;
-            stroke-width: 2;
-            transition: all 0.4s ease;
+            fill: rgba(255,255,255,0.4);
+            stroke: rgba(0,0,0,0.15);
+            stroke-width: 1.5;
+            transition: all 0.5s ease;
         }
         .finger-segment.active {
-            fill: #e8e8e6;
-            stroke: #333;
-            stroke-width: 3;
+            fill: rgba(0,0,0,0.06);
+            stroke: #3a3228;
+            stroke-width: 2.5;
         }
 
         .gong-label {
             font-size: 11px;
-            fill: #aaa;
+            fill: #6b5d4e;
             text-anchor: middle;
-            transition: all 0.4s ease;
+            font-weight: 500;
+            transition: all 0.5s ease;
         }
         .gong-label.active {
-            fill: #1a1a1a;
+            fill: #1a1208;
             font-weight: bold;
             font-size: 13px;
+        }
+
+        .finger-label {
+            fill: #6b5d4e;
+            font-size: 12px;
+            text-anchor: middle;
+            font-weight: 500;
+            transition: all 0.5s ease;
         }
 
         /* ===== 推算过程 ===== */
@@ -226,52 +293,52 @@
             align-items: flex-start;
             gap: 14px;
             padding: 14px 16px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            border-left: 3px solid #e0e0de;
-            transition: all 0.4s ease;
-            background: #fff;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 3px;
+            border-left: 3px solid rgba(0,0,0,0.08);
+            transition: all 0.5s ease;
+            background: rgba(255,255,255,0.35);
         }
         .step.active {
-            border-left-color: #2c2c2c;
-            background: #fafaf8;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            border-left-color: #3a3228;
+            background: rgba(255,255,255,0.55);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
         }
         .step-num {
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            border: 1px solid #ddd;
-            color: #bbb;
+            border: 1px solid rgba(0,0,0,0.15);
+            color: #a89880;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             flex-shrink: 0;
-            transition: all 0.4s ease;
+            transition: all 0.5s ease;
             margin-top: 2px;
         }
         .step.active .step-num {
-            background: #2c2c2c;
-            color: #fff;
-            border-color: #2c2c2c;
+            background: #3a3228;
+            color: #f0ebe0;
+            border-color: #3a3228;
         }
         .step-content { flex: 1; }
-        .step-title { font-size: 13px; color: #999; letter-spacing: 1px; }
-        .step.active .step-title { color: #555; }
-        .step-result { font-size: 14px; margin-top: 6px; color: #555; line-height: 1.7; }
-        .step.active .step-result { color: #2c2c2c; }
-        .step-result .gong-name { font-weight: bold; color: #1a1a1a; }
+        .step-title { font-size: 13px; color: #6b5d4e; letter-spacing: 2px; font-weight: 500; }
+        .step.active .step-title { color: #4a3e2e; font-weight: 600; }
+        .step-result { font-size: 14px; margin-top: 6px; color: #5a4e3e; line-height: 1.8; }
+        .step.active .step-result { color: #1f1a12; font-weight: 500; }
+        .step-result .gong-name { font-weight: bold; color: #2c2418; letter-spacing: 1px; }
 
         /* ===== 最终结果 ===== */
         .final-result {
             text-align: center;
             padding: 28px 0 0;
             margin-top: 24px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid rgba(0,0,0,0.06);
             display: none;
         }
-        .final-result.show { display: block; animation: fadeIn 0.5s ease; }
+        .final-result.show { display: block; animation: fadeIn 0.6s ease; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(12px); }
@@ -279,47 +346,51 @@
         }
 
         .final-gong {
-            font-size: 44px;
-            letter-spacing: 12px;
-            margin-bottom: 10px;
-            color: #1a1a1a;
-            font-weight: 500;
+            font-size: 48px;
+            letter-spacing: 14px;
+            margin-bottom: 12px;
+            color: #1a1208;
+            font-weight: 700;
         }
         .final-tag {
             display: inline-block;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 5px 22px;
+            border-radius: 2px;
+            font-size: 14px;
             margin-bottom: 14px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            font-weight: 600;
         }
-        .tag-ji  { background: #2c2c2c; color: #fff; }
-        .tag-ping { background: #fff; color: #666; border: 1px solid #ccc; }
-        .tag-xiong { background: #fff; color: #888; border: 1px solid #ddd; }
+        .tag-ji  { background: #2c2418; color: #f0ebe0; }
+        .tag-ping { background: transparent; color: #4a3e2e; border: 1.5px solid rgba(0,0,0,0.2); }
+        .tag-xiong { background: transparent; color: #5a4e3e; border: 1.5px solid rgba(0,0,0,0.15); }
 
         .final-meaning {
-            font-size: 16px;
+            font-size: 17px;
             margin-bottom: 8px;
-            color: #333;
+            color: #2c2418;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
         .final-desc {
-            font-size: 13px;
-            color: #888;
-            line-height: 1.8;
+            font-size: 14px;
+            color: #5a4e3e;
+            line-height: 1.9;
             max-width: 360px;
             margin: 0 auto;
+            font-weight: 500;
         }
 
         .question-note-display {
             font-size: 13px;
-            color: #555;
+            color: #5a4e3e;
             margin-bottom: 16px;
             padding: 12px 16px;
-            border: 1px solid #e8e8e6;
-            border-radius: 8px;
-            border-left: 3px solid #2c2c2c;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 3px;
+            border-left: 3px solid #3a3228;
             text-align: left;
-            background: #fafaf8;
+            background: rgba(255,255,255,0.35);
         }
         .question-note-display:empty { display: none; }
 
@@ -334,9 +405,9 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px 24px;
             padding: 16px 18px;
-            border: 1px solid #e8e8e6;
-            border-radius: 8px;
-            background: #fafaf8;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 3px;
+            background: rgba(255,255,255,0.35);
             margin-bottom: 16px;
         }
         .detail-row {
@@ -345,35 +416,37 @@
             font-size: 14px;
         }
         .detail-label {
-            color: #999;
+            color: #5a4e3e;
             flex-shrink: 0;
+            font-weight: 500;
         }
         .detail-value {
-            color: #2c2c2c;
-            font-weight: 500;
+            color: #1f1a12;
+            font-weight: 600;
         }
         .divination-block {
             padding: 16px 18px;
-            border: 1px solid #e8e8e6;
-            border-radius: 8px;
-            background: #fafaf8;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 3px;
+            background: rgba(255,255,255,0.4);
             margin-bottom: 12px;
             text-align: left;
         }
         .divination-block:last-child { margin-bottom: 0; }
         .divination-label {
-            font-size: 12px;
-            color: #555;
+            font-size: 13px;
+            color: #2c2418;
             margin-bottom: 10px;
-            letter-spacing: 2px;
-            font-weight: 500;
+            letter-spacing: 3px;
+            font-weight: 600;
         }
-        .divination-text { font-size: 14px; line-height: 1.9; color: #444; }
+        .divination-text { font-size: 14px; line-height: 2; color: #2c2418; font-weight: 500; }
         .verse-text {
             font-size: 14px;
-            color: #666;
+            color: #3a3028;
             font-style: italic;
-            line-height: 2.1;
+            line-height: 2.2;
+            font-weight: 500;
         }
 
         .formula-display {
@@ -381,16 +454,19 @@
             margin-top: 16px;
             padding: 12px;
             font-size: 13px;
-            color: #aaa;
-            border-top: 1px dashed #e0e0de;
-            letter-spacing: 1px;
+            color: #6b5d4e;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+            font-weight: 500;
         }
 
         .current-time-display {
             text-align: center;
-            color: #bbb;
+            color: #6b5d4e;
             font-size: 12px;
             margin-top: 12px;
+            letter-spacing: 1px;
+            font-weight: 500;
         }
 
         /* ===== 起卦方式切换 ===== */
@@ -398,30 +474,32 @@
             display: flex;
             gap: 0;
             margin-bottom: 20px;
-            border: 1px solid #e0e0de;
-            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 3px;
             overflow: hidden;
         }
         .method-tab {
             flex: 1;
             padding: 11px;
             text-align: center;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
-            background: #fff;
-            color: #888;
+            background: rgba(255,255,255,0.4);
+            color: #5a4e3e;
             border: none;
             font-family: inherit;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            font-weight: 500;
             transition: all 0.3s;
         }
         .method-tab.active {
-            background: #2c2c2c;
-            color: #fff;
+            background: #2c2418;
+            color: #f0ebe0;
+            font-weight: 600;
         }
         .method-tab:not(.active):hover {
-            background: #f5f5f2;
-            color: #555;
+            background: rgba(255,255,255,0.6);
+            color: #3a3028;
         }
 
         /* ===== 三数输入 ===== */
@@ -437,25 +515,25 @@
             text-align: center;
             font-size: 22px;
             padding: 0;
-            border: 1px solid #e0e0de;
-            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 3px;
             font-family: inherit;
-            background: #fafaf8;
-            color: #2c2c2c;
+            background: rgba(255,255,255,0.5);
+            color: #3a3228;
             outline: none;
-            transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+            transition: all 0.3s;
         }
         .number-input-group input:hover {
-            border-color: #ccc;
+            border-color: rgba(0,0,0,0.2);
         }
         .number-input-group input:focus {
-            border-color: #555;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.35);
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
         }
         .number-separator {
             font-size: 20px;
-            color: #ccc;
+            color: #b8a898;
             font-weight: 300;
         }
         .number-labels {
@@ -463,9 +541,10 @@
             justify-content: center;
             gap: 54px;
             margin-top: 8px;
-            font-size: 12px;
-            color: #aaa;
-            letter-spacing: 1px;
+            font-size: 13px;
+            color: #5a4e3e;
+            letter-spacing: 2px;
+            font-weight: 500;
         }
 
         /* ===== 公历/农历切换 ===== */
@@ -473,48 +552,51 @@
             display: flex;
             gap: 0;
             margin-bottom: 16px;
-            border: 1px solid #e0e0de;
-            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 3px;
             overflow: hidden;
         }
         .cal-toggle-btn {
             flex: 1;
             padding: 9px;
             text-align: center;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
-            background: #fff;
-            color: #888;
+            background: rgba(255,255,255,0.4);
+            color: #5a4e3e;
             border: none;
             font-family: inherit;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            font-weight: 500;
             transition: all 0.3s;
         }
         .cal-toggle-btn.active {
-            background: #444;
-            color: #fff;
+            background: #3a3028;
+            color: #f0ebe0;
+            font-weight: 600;
         }
         .cal-toggle-btn:not(.active):hover {
-            background: #f5f5f2;
-            color: #555;
+            background: rgba(255,255,255,0.6);
+            color: #3a3028;
         }
 
         .cal-section { display: none; }
-        .cal-section.active { display: block; }
+        .cal-section.active { display: block; animation: fadeIn 0.3s ease; }
 
         /* 闰月复选框 */
         .leap-check-group {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 13px;
-            color: #666;
+            font-size: 14px;
+            color: #4a3e2e;
             padding-top: 4px;
+            font-weight: 500;
         }
         .leap-check-group input[type="checkbox"] {
             width: 15px;
             height: 15px;
-            accent-color: #444;
+            accent-color: #3a3228;
             cursor: pointer;
         }
 
@@ -528,10 +610,11 @@
 
         .hint-text {
             font-size: 12px;
-            color: #bbb;
+            color: #8b7d6b;
             margin-top: 10px;
             text-align: center;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -659,7 +742,7 @@
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-secondary" id="btnSecondary" onclick="useCurrentTime()">使用当前时间</button>
-                        <button class="btn btn-primary" onclick="calculate()">起卦</button>
+                        <button class="btn btn-primary" id="btnPrimary" onclick="calculate()">起卦</button>
                     </div>
                     <div class="current-time-display" id="currentTimeDisplay"></div>
                 </div>
@@ -1355,23 +1438,16 @@
             document.getElementById('finalResult').classList.remove('show');
             document.getElementById('formulaDisplay').style.display = 'none';
 
-            let yueIndex, riIndex, shiIndex;
-            let yueGong, riGong, shiGong;
-            let formula;
-
             if (currentMethod === 'time') {
-                // ===== 时间起卦 =====
                 const shi = parseInt(document.getElementById('hour').value);
                 if (!shi) {
                     alert('请选择时辰');
                     return;
                 }
-                const scName = shiChen[shi - 1].name;
 
-                let yue, ri, isLeap, displayMonthName, leapNote, effectiveMonth;
+                let lunar;
 
                 if (currentCalendar === 'solar') {
-                    // 公历输入 → 转为农历
                     const sy = parseInt(document.getElementById('solarYear').value);
                     const sm = parseInt(document.getElementById('solarMonth').value);
                     const sd = parseInt(document.getElementById('solarDay').value);
@@ -1379,155 +1455,169 @@
                         alert('请完整填写公历日期');
                         return;
                     }
-                    const lunar = solarToLunar(sy, sm, sd);
+                    lunar = solarToLunar(sy, sm, sd);
                     if (!lunar) {
                         alert('农历转换失败，请检查日期范围（1900-2100年）');
                         return;
                     }
-                    yue = lunar.month;
-                    ri = lunar.day;
-                    isLeap = lunar.isLeap;
+                    document.getElementById('currentTimeDisplay').textContent =
+                        '公历' + sy + '年' + sm + '月' + sd + '日 → 农历丙午年' + (lunar.isLeap ? '闰' : '') + lunarMonthNames[lunar.month - 1] + '月' + lunarDayNames[lunar.day];
+                    doCalculateTime(sy, sm, sd, shi, lunar);
                 } else {
-                    // 农历直接输入
                     const ly = parseInt(document.getElementById('lunarYear').value);
                     const lm = parseInt(document.getElementById('lunarMonth').value);
                     const ld = parseInt(document.getElementById('lunarDay').value);
-                    isLeap = document.getElementById('isLeapMonth').checked;
+                    const isLeap = document.getElementById('isLeapMonth').checked;
                     if (!ly || !lm || !ld) {
                         alert('请完整填写农历日期');
                         return;
                     }
-                    yue = lm;
-                    ri = ld;
+                    lunar = { year: ly, month: lm, day: ld, isLeap: isLeap };
+                    document.getElementById('currentTimeDisplay').textContent =
+                        '农历' + ly + '年' + (isLeap ? '闰' : '') + lunarMonthNames[lm - 1] + '月' + lunarDayNames[ld];
+                    doCalculateTime(ly, lm, ld, shi, lunar);
                 }
-
-                displayMonthName = lunarMonthNames[yue-1];
-                leapNote = '';
-                effectiveMonth = yue;
-
-                // 闰月处理：上半月算前月，下半月算本月
-                if (isLeap) {
-                    if (ri <= 15) {
-                        effectiveMonth = yue - 1;
-                        displayMonthName = lunarMonthNames[effectiveMonth-1];
-                        leapNote = '（闰月上半月，按前月' + displayMonthName + '计算）';
-                    } else {
-                        leapNote = '（闰月下半月，按本月' + displayMonthName + '计算）';
-                    }
-                }
-
-                // Step 1: 月起
-                yueIndex = (effectiveMonth - 1) % 6;
-                yueGong = liuGong[yueIndex];
-                const yueSeq = getGongSequence(0, effectiveMonth);
-
-                setTimeout(() => {
-                    document.getElementById('step1').classList.add('active');
-                    document.getElementById('step1Result').innerHTML =
-                        '从大安起正月，顺数至' + displayMonthName + '，经过：' +
-                        yueSeq.join(' → ') + '<br>' +
-                        '月落<span class="gong-name">' + yueGong.name + '</span>宫' +
-                        (leapNote ? '<br><span style="color:#888;font-size:12px;">' + leapNote + '</span>' : '');
-                    highlightGong(yueIndex);
-                }, 100);
-
-                // Step 2: 日起
-                riIndex = (yueIndex + ri - 1) % 6;
-                riGong = liuGong[riIndex];
-                const riSeq = getGongSequence(yueIndex, Math.min(ri, 12));
-
-                setTimeout(() => {
-                    document.getElementById('step2').classList.add('active');
-                    const riSeqStr = ri <= 12 ? riSeq.join(' → ') : riSeq.join(' → ') + ' ...';
-                    document.getElementById('step2Result').innerHTML =
-                        '从' + yueGong.name + '起初一，顺数至' + lunarDayNames[ri] +
-                        (ri > 12 ? '（循环往复）' : '') + '：' + riSeqStr + '<br>' +
-                        '日落<span class="gong-name">' + riGong.name + '</span>宫';
-                    highlightGong(riIndex);
-                }, 600);
-
-                // Step 3: 时起
-                shiIndex = (riIndex + shi - 1) % 6;
-                shiGong = liuGong[shiIndex];
-                const shiSeq = getGongSequence(riIndex, Math.min(shi, 12));
-
-                setTimeout(() => {
-                    document.getElementById('step3').classList.add('active');
-                    const shiSeqStr = shi <= 12 ? shiSeq.join(' → ') : shiSeq.join(' → ') + ' ...';
-                    document.getElementById('step3Result').innerHTML =
-                        '从' + riGong.name + '起子时，顺数至' + scName + '时' +
-                        (shi > 12 ? '（循环往复）' : '') + '：' + shiSeqStr + '<br>' +
-                        '时落<span class="gong-name">' + shiGong.name + '</span>宫';
-                    highlightGong(shiIndex);
-                }, 1100);
-
-                const prefix = isLeap ? '闰' : '';
-                formula = '农历' + prefix + lunarMonthNames[yue-1] + lunarDayNames[ri] +
-                    ' ' + scName + '时' + (leapNote ? ' ' + leapNote : '') + ' → ' + shiGong.name;
-
             } else {
-                // ===== 三数起卦 =====
-                const n1 = parseInt(document.getElementById('numHundred').value);
-                const n2 = parseInt(document.getElementById('numTen').value);
-                const n3 = parseInt(document.getElementById('numOne').value);
-
-                if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
-                    alert('请输入完整的三位数字（0-9）');
-                    return;
-                }
-
-                // 0当作6处理（取满数），1-9直接使用
-                const num1 = n1 === 0 ? 6 : n1;
-                const num2 = n2 === 0 ? 6 : n2;
-                const num3 = n3 === 0 ? 6 : n3;
-
-                // Step 1: 百位数 — 从大安起顺数
-                yueIndex = (num1 - 1) % 6;
-                yueGong = liuGong[yueIndex];
-                const seq1 = getGongSequence(0, Math.min(num1, 12));
-
-                setTimeout(() => {
-                    document.getElementById('step1').classList.add('active');
-                    const seq1Str = num1 <= 12 ? seq1.join(' → ') : seq1.join(' → ') + ' ...';
-                    document.getElementById('step1Result').innerHTML =
-                        '从大安起，顺数' + num1 + '位' +
-                        (num1 > 12 ? '（循环往复）' : '') + '：' + seq1Str + '<br>' +
-                        '百位落<span class="gong-name">' + yueGong.name + '</span>宫';
-                    highlightGong(yueIndex);
-                }, 100);
-
-                // Step 2: 十位数 — 从百位落宫起顺数
-                riIndex = (yueIndex + num2 - 1) % 6;
-                riGong = liuGong[riIndex];
-                const seq2 = getGongSequence(yueIndex, Math.min(num2, 12));
-
-                setTimeout(() => {
-                    document.getElementById('step2').classList.add('active');
-                    const seq2Str = num2 <= 12 ? seq2.join(' → ') : seq2.join(' → ') + ' ...';
-                    document.getElementById('step2Result').innerHTML =
-                        '从' + yueGong.name + '起，顺数' + num2 + '位' +
-                        (num2 > 12 ? '（循环往复）' : '') + '：' + seq2Str + '<br>' +
-                        '十位落<span class="gong-name">' + riGong.name + '</span>宫';
-                    highlightGong(riIndex);
-                }, 600);
-
-                // Step 3: 个位数 — 从十位落宫起顺数
-                shiIndex = (riIndex + num3 - 1) % 6;
-                shiGong = liuGong[shiIndex];
-                const seq3 = getGongSequence(riIndex, Math.min(num3, 12));
-
-                setTimeout(() => {
-                    document.getElementById('step3').classList.add('active');
-                    const seq3Str = num3 <= 12 ? seq3.join(' → ') : seq3.join(' → ') + ' ...';
-                    document.getElementById('step3Result').innerHTML =
-                        '从' + riGong.name + '起，顺数' + num3 + '位' +
-                        (num3 > 12 ? '（循环往复）' : '') + '：' + seq3Str + '<br>' +
-                        '个位落<span class="gong-name">' + shiGong.name + '</span>宫';
-                    highlightGong(shiIndex);
-                }, 1100);
-
-                formula = '三数 ' + n1 + '-' + n2 + '-' + n3 + ' → ' + shiGong.name;
+                doCalculateNumber();
             }
+        }
+
+        function doCalculateTime(sy, sm, sd, shi, lunar) {
+            const yue = lunar.month;
+            const ri = lunar.day;
+            const isLeap = lunar.isLeap;
+            const scName = shiChen[shi - 1].name;
+
+            let displayMonthName = lunarMonthNames[yue-1];
+            let leapNote = '';
+            let effectiveMonth = yue;
+
+            if (isLeap) {
+                if (ri <= 15) {
+                    effectiveMonth = yue - 1;
+                    displayMonthName = lunarMonthNames[effectiveMonth-1];
+                    leapNote = '（闰月上半月，按前月' + displayMonthName + '计算）';
+                } else {
+                    leapNote = '（闰月下半月，按本月' + displayMonthName + '计算）';
+                }
+            }
+
+            // Step 1: 月起
+            const yueIndex = (effectiveMonth - 1) % 6;
+            const yueGong = liuGong[yueIndex];
+            const yueSeq = getGongSequence(0, effectiveMonth);
+
+            setTimeout(() => {
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('step1Result').innerHTML =
+                    '从大安起正月，顺数至' + displayMonthName + '，经过：' +
+                    yueSeq.join(' → ') + '<br>' +
+                    '月落<span class="gong-name">' + yueGong.name + '</span>宫' +
+                    (leapNote ? '<br><span style="color:#888;font-size:12px;">' + leapNote + '</span>' : '');
+                highlightGong(yueIndex);
+            }, 100);
+
+            // Step 2: 日起
+            const riIndex = (yueIndex + ri - 1) % 6;
+            const riGong = liuGong[riIndex];
+            const riSeq = getGongSequence(yueIndex, Math.min(ri, 12));
+
+            setTimeout(() => {
+                document.getElementById('step2').classList.add('active');
+                const riSeqStr = ri <= 12 ? riSeq.join(' → ') : riSeq.join(' → ') + ' ...';
+                document.getElementById('step2Result').innerHTML =
+                    '从' + yueGong.name + '起初一，顺数至' + lunarDayNames[ri] +
+                    (ri > 12 ? '（循环往复）' : '') + '：' + riSeqStr + '<br>' +
+                    '日落<span class="gong-name">' + riGong.name + '</span>宫';
+                highlightGong(riIndex);
+            }, 600);
+
+            // Step 3: 时起
+            const shiIndex = (riIndex + shi - 1) % 6;
+            const shiGong = liuGong[shiIndex];
+            const shiSeq = getGongSequence(riIndex, Math.min(shi, 12));
+
+            setTimeout(() => {
+                document.getElementById('step3').classList.add('active');
+                const shiSeqStr = shi <= 12 ? shiSeq.join(' → ') : shiSeq.join(' → ') + ' ...';
+                document.getElementById('step3Result').innerHTML =
+                    '从' + riGong.name + '起子时，顺数至' + scName + '时' +
+                    (shi > 12 ? '（循环往复）' : '') + '：' + shiSeqStr + '<br>' +
+                    '时落<span class="gong-name">' + shiGong.name + '</span>宫';
+                highlightGong(shiIndex);
+            }, 1100);
+
+            const prefix = isLeap ? '闰' : '';
+            const formula = '农历' + prefix + lunarMonthNames[yue-1] + lunarDayNames[ri] +
+                ' ' + scName + '时' + (leapNote ? ' ' + leapNote : '') + ' → ' + shiGong.name;
+
+            // 显示结果
+            showResult(sy, sm, sd, shi, shiGong, formula);
+        }
+
+        function doCalculateNumber() {
+            const n1 = parseInt(document.getElementById('numHundred').value);
+            const n2 = parseInt(document.getElementById('numTen').value);
+            const n3 = parseInt(document.getElementById('numOne').value);
+
+            if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
+                alert('请输入完整的三位数字（0-9）');
+                return;
+            }
+
+            const num1 = n1 === 0 ? 6 : n1;
+            const num2 = n2 === 0 ? 6 : n2;
+            const num3 = n3 === 0 ? 6 : n3;
+
+            const yueIndex = (num1 - 1) % 6;
+            const yueGong = liuGong[yueIndex];
+            const seq1 = getGongSequence(0, Math.min(num1, 12));
+
+            setTimeout(() => {
+                document.getElementById('step1').classList.add('active');
+                const seq1Str = num1 <= 12 ? seq1.join(' → ') : seq1.join(' → ') + ' ...';
+                document.getElementById('step1Result').innerHTML =
+                    '从大安起，顺数' + num1 + '位' +
+                    (num1 > 12 ? '（循环往复）' : '') + '：' + seq1Str + '<br>' +
+                    '百位落<span class="gong-name">' + yueGong.name + '</span>宫';
+                highlightGong(yueIndex);
+            }, 100);
+
+            const riIndex = (yueIndex + num2 - 1) % 6;
+            const riGong = liuGong[riIndex];
+            const seq2 = getGongSequence(yueIndex, Math.min(num2, 12));
+
+            setTimeout(() => {
+                document.getElementById('step2').classList.add('active');
+                const seq2Str = num2 <= 12 ? seq2.join(' → ') : seq2.join(' → ') + ' ...';
+                document.getElementById('step2Result').innerHTML =
+                    '从' + yueGong.name + '起，顺数' + num2 + '位' +
+                    (num2 > 12 ? '（循环往复）' : '') + '：' + seq2Str + '<br>' +
+                    '十位落<span class="gong-name">' + riGong.name + '</span>宫';
+                highlightGong(riIndex);
+            }, 600);
+
+            const shiIndex = (riIndex + num3 - 1) % 6;
+            const shiGong = liuGong[shiIndex];
+            const seq3 = getGongSequence(riIndex, Math.min(num3, 12));
+
+            setTimeout(() => {
+                document.getElementById('step3').classList.add('active');
+                const seq3Str = num3 <= 12 ? seq3.join(' → ') : seq3.join(' → ') + ' ...';
+                document.getElementById('step3Result').innerHTML =
+                    '从' + riGong.name + '起，顺数' + num3 + '位' +
+                    (num3 > 12 ? '（循环往复）' : '') + '：' + seq3Str + '<br>' +
+                    '个位落<span class="gong-name">' + shiGong.name + '</span>宫';
+                highlightGong(shiIndex);
+            }, 1100);
+
+            const formula = '三数' + n1 + '-' + n2 + '-' + n3 + ' → ' + shiGong.name;
+            showResult(null, null, null, null, shiGong, formula);
+        }
+
+        function showResult(sy, sm, sd, shi, shiGong, formula) {
+            const questionType = document.getElementById('questionType').value;
+            const questionNote = document.getElementById('questionNote').value.trim();
 
             // 最终结果（通用）
             setTimeout(() => {
